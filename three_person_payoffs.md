@@ -1,5 +1,7 @@
 # Three-person attendance game: proposed payoffs
 
+**Provenance.** The payoff below is our proposed one-day specification, not an equation copied from the telecommuting paper. Its cost-of-distancing versus expected cost-of-infection structure follows the modeling idea in [Reluga (2010)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000793); the three-person network, exact probability, and numerical costs are choices made for this exercise.
+
 **Purpose.** This is a one-day, three-player game to discuss individual incentives before adding game decisions to the SIS simulation. People 1, 2, and 3 all know one another, so the potential contact network is the complete graph $K_3$. For the first example, the infection states at the start of the day are public: person 1 is infected and persons 2 and 3 are susceptible. This information assumption is part of the proposed game, not a claim about real workplaces.
 
 **Actions and timing.** Each person simultaneously chooses $A$ (attend) or $H$ (stay home). A pair has an on-site contact only if both choose $A$. In this first game, staying home removes all contacts in this three-person network. Transmission and recovery are evaluated from the *start-of-day* infection states; changes take effect at the end of the day, as in the SIS simulation. An initially infected person transmits during the day and recovers with probability $\gamma$ at its end. A susceptible person who becomes infected can recover on a later day and then be infected again.

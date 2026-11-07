@@ -312,12 +312,19 @@ def main():
     for profile in profiles:
         print(profile)
 
-    print("Pure Nash equilibria:", pure_nash_equilibria(**params))
+    nash_profiles = pure_nash_equilibria(**params)
+    print("Pure Nash equilibria:", nash_profiles)
 
     result = solve_best_correlated_equilibrium(**params)  # giải LP với params
     balanced = symmetrize_lottery(result.x)  # cân bằng result.x
 
+    fair_nash_welfare = sum(
+    total_payoff(profile, **params) for profile in nash_profiles
+    ) / len(nash_profiles)
+
+    print("Fair Nash lottery total payoff:", round(fair_nash_welfare, 6))
     print("Optimal CE total payoff:", round(-result.fun, 6))
+    print("CE welfare gain:", round(-result.fun - fair_nash_welfare, 6))
     print("Balanced lottery is CE:", is_correlated_equilibrium(balanced, **params))
     
     print("\nBalanced optimal CE probabilities:")
@@ -327,8 +334,12 @@ def main():
     
     print_rotation_sweep(params["beta"], params["infection_cost"])
     print_rotation_pi_grid(
-    params["beta"], params["infection_cost"], params["home_cost"]
-    )
+    params["beta"], params["infection_cost"], params["home_cost"])
 
+    low, high = rotation_cost_interval(
+    params["pi"], params["beta"], params["infection_cost"]
+    )
+    print(f"Two-attendee Nash c interval: [{low:.6f}, {high:.6f}]")
+    print("Current c supports rotation:", low <= params["home_cost"] <= high)
 if __name__ == "__main__":
     main()

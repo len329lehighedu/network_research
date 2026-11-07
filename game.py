@@ -313,7 +313,7 @@ def main():
         print(profile)
 
     nash_profiles = pure_nash_equilibria(**params)
-    print("Pure Nash equilibria:", nash_profiles)
+    print("\nPure Nash equilibria:", nash_profiles)
 
     result = solve_best_correlated_equilibrium(**params)  # giải LP với params
     balanced = symmetrize_lottery(result.x)  # cân bằng result.x
@@ -332,10 +332,20 @@ def main():
         if probability > 1e-8:
             print(profile, f"{probability:.6f}")
     
+    print("\n")
+    for player in PLAYERS:
+        attendance_prob = sum(
+            probability
+            for profile, probability in zip(profiles, balanced)
+            if profile[player] == "A"
+        )
+        print(f"Player {player} attends with probability: {attendance_prob:.6f}")
+    
     print_rotation_sweep(params["beta"], params["infection_cost"])
     print_rotation_pi_grid(
     params["beta"], params["infection_cost"], params["home_cost"])
 
+    print("\n")
     low, high = rotation_cost_interval(
     params["pi"], params["beta"], params["infection_cost"]
     )

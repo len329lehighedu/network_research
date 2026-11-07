@@ -1,4 +1,4 @@
-# Reproduce the SIS experiments
+# Reproduce the SIS experiments and attendance game
 
 Run these commands from the repository directory. Python 3.14 and the versions in `requirements.txt` were used for the reported results.
 
@@ -30,4 +30,10 @@ mkdir -p reproduced
 ```bash
 .venv/bin/python -u sis_experiment.py --sweep --worlds 20 --runs-per-world 50 --plot-path reproduced/sis_beta_sweep_20w50r.png | tee reproduced/beta_sweep_20w50r.txt
 .venv/bin/python sis_experiment.py --thresholds --worlds 20
+```
+
+## Three-person attendance game
+
+```bash
+.venv/bin/python game.py
 ```

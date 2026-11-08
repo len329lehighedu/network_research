@@ -579,8 +579,6 @@ def print_beta_sweep(summary: dict) -> None:
             )
 
 # Plot the beta sweep
-
-
 def plot_beta_sweep(summary: dict, output_path: Path) -> None:
     # Three scales reveal the overall trend, all 50% schedules, and the
     # focused Rotating versus half-edge On-Off comparison.

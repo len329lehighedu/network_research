@@ -37,3 +37,8 @@ mkdir -p reproduced
 ```bash
 .venv/bin/python game.py
 ```
+
+## Community-network experiment
+
+See [community_results/result.md](community_results/result.md) for the full
+tables, interpretation, saved trajectories, and reproduction commands.

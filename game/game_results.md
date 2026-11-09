@@ -25,7 +25,7 @@ Here $\beta=0.04$ and $L=10$ throughout. “Rotation NE?” indicates whether th
 | 0.50 | 0.05 | 0.150 | 0.250 | No | 0.100 | 0.100 |
 | 0.50 | 0.12 | 0.360 | 0.320 | Yes | 0.267 | 0.240 |
 
-At $\pi=0.1$, the two-attendee lottery is an equilibrium for $0.036 \leq c \leq 0.071856$. Its incentive status changes outside that interval. 
+At $\pi=0.1$, the two-attendee lottery is an equilibrium for $0.036 \leq c \leq 0.071856$. When $c=0.02$, an attendee prefers to stay home; when $c=0.12$, the person sent home prefers to attend. The lottery's cost is still shown outside this interval as a hypothetical benchmark. At $\pi=0.5$ and $c=0.05$, the CE reaches the social minimum because a one-attendee profile is already a pure Nash equilibrium; this 100% gap closure does not require a nontrivial correlated lottery. The full 19-by-20 grid is in [cost_grid.txt](cost_grid.txt).
 
 ## Small contact networks (4–6 people)
 

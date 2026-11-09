@@ -36,6 +36,7 @@ python3 -m venv .venv
 ```bash
 .venv/bin/python game/game.py
 .venv/bin/python game/game.py --cost-grid-output game/reproduced_cost_grid.txt
+.venv/bin/python game/network_game.py --summary
 ```
 
 The concise game results are in [game/game_results.md](game/game_results.md).

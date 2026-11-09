@@ -26,3 +26,20 @@ Here $\beta=0.04$ and $L=10$ throughout. “Rotation NE?” indicates whether th
 | 0.50 | 0.12 | 0.360 | 0.320 | Yes | 0.267 | 0.240 |
 
 At $\pi=0.1$, the two-attendee lottery is an equilibrium for $0.036 \leq c \leq 0.071856$. Its incentive status changes outside that interval. 
+
+## Small contact networks (4–6 people)
+
+The one-day game now uses each person's graph neighbors as possible workplace contacts. At $\pi=0.1$, $\beta=0.04$, $L=10$, and $c=0.05$, costs below are **group totals above $nL\pi$**. “Best pure Nash” is the lowest-cost pure equilibrium on that graph; its gap to the social minimum is the denominator for “CE gap closed.” This is a different benchmark from the independent mixed Nash in the three-person table above.
+
+| Graph | People | Edges | Best pure Nash | Best CE | Social minimum | CE gap closed | Expected active edges under CE |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Path | 4 | 3 | 0.122000 | 0.112356 | 0.100000 | 43.8% | 0.561617 |
+| Star | 5 | 4 | 0.050000 | 0.050000 | 0.050000 | — | 0 |
+| Triangle with a leaf | 4 | 4 | 0.122000 | 0.122000 | 0.100000 | 0.0% | 1.000000 |
+| Path | 6 | 5 | 0.172000 | 0.158590 | 0.150000 | 61.0% | 0.390451 |
+
+The CE improves on pure Nash for both paths. The star's pure Nash already attains the social minimum. On the triangle with a leaf, a cheaper action profile exists, but the CE constraints do not permit an improvement at these parameters.
+
+We average optimal CE lotteries over graph symmetries, which preserves their welfare and obedience while treating structurally equivalent nodes equally. This does **not** make attendance equal across different graph positions: in the star, the center stays home and all four leaves attend, leaving zero active edges. The current payoff charges for staying home and infection, but does not reward meeting particular people. One-day results therefore cannot yet value the contacts lost under this arrangement. Optimal lotteries can also be nonunique; the displayed attendance probabilities in `network_game.py --summary` describe one symmetry-balanced optimum.
+
+Run from the repository root: `.venv/bin/python game/network_game.py --summary`.

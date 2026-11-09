@@ -38,8 +38,4 @@ The one-day game now uses each person's graph neighbors as possible workplace co
 | Triangle with a leaf | 4 | 4 | 0.122000 | 0.122000 | 0.100000 | 0.0% | 1.000000 |
 | Path | 6 | 5 | 0.172000 | 0.158590 | 0.150000 | 61.0% | 0.390451 |
 
-The CE improves on pure Nash for both paths. The star's pure Nash already attains the social minimum. On the triangle with a leaf, a cheaper action profile exists, but the CE constraints do not permit an improvement at these parameters.
-
-We average optimal CE lotteries over graph symmetries, which preserves their welfare and obedience while treating structurally equivalent nodes equally. This does **not** make attendance equal across different graph positions: in the star, the center stays home and all four leaves attend, leaving zero active edges. The current payoff charges for staying home and infection, but does not reward meeting particular people. One-day results therefore cannot yet value the contacts lost under this arrangement. Optimal lotteries can also be nonunique; the displayed attendance probabilities in `network_game.py --summary` describe one symmetry-balanced optimum.
-
-Run from the repository root: `.venv/bin/python game/network_game.py --summary`.
+Reproduction: run from the repository root: `.venv/bin/python game/network_game.py --summary`.

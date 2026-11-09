@@ -1,4 +1,6 @@
+import argparse
 from itertools import product
+from pathlib import Path
 import numpy as np
 from scipy.optimize import linprog
 
@@ -95,6 +97,179 @@ def total_payoff(profile, pi, beta, infection_cost, home_cost):
         total += expected_payoff(profile, player, pi, beta, infection_cost, home_cost)
     return total
 
+def extra_cost(profile, pi, beta, infection_cost, home_cost):
+    """Total expected cost above the three players' baseline infection cost."""
+    baseline = len(PLAYERS) * infection_cost * pi
+    # convert total_payoff to cost, then baseline
+    return -total_payoff(profile, pi, beta, infection_cost, home_cost) - baseline
+
+def symmetric_attendance_probability(pi, beta, infection_cost, home_cost):
+    """Probability each player attends in the symmetric Nash equilibrium."""
+    cost_if_two_peers_attend = (
+        infection_cost * (1 - pi)
+        * new_infection_probability(2, pi, beta)
+    )
+
+    if home_cost >= cost_if_two_peers_attend:
+        return 1.0
+
+    if home_cost <= 0:
+        return 0.0
+ 
+    x = (1-np.sqrt(1 - home_cost/(infection_cost * (1 - pi))))/(pi * beta) 
+    return x
+
+def symmetric_nash_extra_cost(pi, beta, infection_cost, home_cost):
+    """Expected group cost above baseline in the symmetric Nash equilibrium."""
+    x = symmetric_attendance_probability(
+        pi, beta, infection_cost, home_cost
+    )
+
+    # pi*x is the probability that a person infected attend.
+    cost_if_attend = (
+        infection_cost * (1 - pi)
+        * new_infection_probability(2, pi * x, beta)
+    )
+
+    # expected cost = prob attend * cost attend + prob home * cost home
+    cost_per_person = x * cost_if_attend + (1-x) * home_cost
+
+    # cost per person * number of person
+    return len(PLAYERS) * cost_per_person
+
+def fair_rotation_extra_cost(pi, beta, infection_cost, home_cost):
+    """Mean extra cost when each two-attendee profile is equally likely."""
+    profiles = [
+        profile for profile in all_action_profiles()
+        if profile.count("A") == 2
+    ]
+    # calculate average extra cost for 3 profiles
+    costs = [
+    extra_cost(profile, pi, beta, infection_cost, home_cost)
+    for profile in profiles
+    ]
+    return sum(costs) / len(costs)
+
+def social_optimum_extra_cost(pi, beta, infection_cost, home_cost):
+    """Lowest extra cost among all action profiles, ignoring incentives."""
+    # create a list of extra_cost for all 8 profiles
+    costs = [extra_cost(profile, pi, beta, infection_cost, home_cost) for profile in all_action_profiles()]
+    # return the minimum extra cost
+    return np.min(costs)
+
+def best_ce_extra_cost(pi, beta, infection_cost, home_cost):
+    """Extra cost of the welfare-maximizing correlated equilibrium."""
+    result = solve_best_correlated_equilibrium(
+        pi, beta, infection_cost, home_cost
+    )
+    baseline = len(PLAYERS) * infection_cost * pi
+    # TODO: result.fun = total cost; minus baseline
+    return result.fun - baseline
+
+# fraction closed = (nash cost - scheme cost)/(nash cost - minium cost)
+def fraction_gap_closed(nash_cost, scheme_cost, minimum_cost):
+    """Share of the Nash-to-social-minimum cost gap removed by a scheme."""
+    gap = nash_cost - minimum_cost
+
+    if abs(gap) < 1e-12:
+        return None  # no gap between nash cost and minimum cost
+
+    return (nash_cost - scheme_cost)/gap
+
+def cost_ladder(pi, beta, infection_cost, home_cost):
+    """Four extra costs and whether fair rotation is a Nash lottery."""
+    params = dict(
+        pi=pi, beta=beta,
+        infection_cost=infection_cost, home_cost=home_cost
+    )
+
+    nash = symmetric_nash_extra_cost(**params)      # symmetric_nash_extra_cost
+    rotation = fair_rotation_extra_cost(**params)   # fair_rotation_extra_cost
+    ce = best_ce_extra_cost(**params)         # best_ce_extra_cost
+    minimum = social_optimum_extra_cost(**params)    # social_optimum_extra_cost
+
+    low, high = rotation_cost_interval(pi, beta, infection_cost)
+    rotation_is_equilibrium = (
+        low - 1e-12 <= home_cost <= high + 1e-12
+    )
+    rotation_share = (
+    fraction_gap_closed(nash, rotation, minimum)
+    if rotation_is_equilibrium else None
+    )
+    ce_share = fraction_gap_closed(nash, ce, minimum)
+
+    return {
+        "nash": nash,
+        "rotation": rotation,
+        "ce": ce,
+        "minimum": minimum,
+        "rotation_is_equilibrium": rotation_is_equilibrium,
+        "rotation_gap_closed": rotation_share,
+        "ce_gap_closed": ce_share,
+    }
+    
+def cost_grid(pi_values, home_cost_values, beta, infection_cost):
+    """Return one cost-ladder row for each (pi, home_cost) pair."""
+    rows = []
+
+    for pi in pi_values:
+        for home_cost in home_cost_values:
+            # call cost_ladder for pi and c
+            ladder = cost_ladder(pi, beta, infection_cost, home_cost)
+            # create a dic with pi, c and values in ladder
+            rows.append({"pi": pi, "c": home_cost, **ladder})
+
+    return rows
+
+def print_cost_grid(rows, output=None):
+    """Print the four costs and incentive status as a Markdown table."""
+    print(
+        "| pi | c | Nash | Fair rotation | Rotation NE? | "
+        "Best CE | Minimum | Rotation gap closed | CE gap closed |",
+        file=output,
+    )
+    print("|---:|---:|---:|---:|:---:|---:|---:|---:|---:|", file=output)
+
+    for row in rows:
+        rotation_share = row["rotation_gap_closed"]
+        ce_share = row["ce_gap_closed"]
+
+        if rotation_share is not None and abs(rotation_share) < 1e-9:
+            rotation_share = 0.0
+        rotation_text = (
+            "—" if rotation_share is None else f"{rotation_share:.1%}"
+        )
+        if ce_share is not None and abs(ce_share) < 1e-9:
+            ce_share = 0.0
+        ce_text = "—" if ce_share is None else f"{ce_share:.1%}"
+        status = "Yes" if row["rotation_is_equilibrium"] else "No"
+
+        print(
+            f"| {row['pi']:.2f} | {row['c']:.2f} | "
+            f"{row['nash']:.3f} | {row['rotation']:.3f} | {status} | "
+            f"{row['ce']:.3f} | {row['minimum']:.3f} | "
+            f"{rotation_text} | {ce_text} |",
+            file=output,
+        )
+
+
+def write_cost_grid_text(path, rows, beta, infection_cost):
+    """Write the full game grid as a text file with a Markdown table."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("w", encoding="utf-8") as output:
+        output.write("Three-person game: one-day extra costs\n")
+        output.write(f"beta={beta}; infection cost L={infection_cost}\n")
+        output.write(f"Grid cells: {len(rows)}; rotation equilibria: ")
+        output.write(f"{sum(row['rotation_is_equilibrium'] for row in rows)}\n")
+        output.write("All costs exclude the baseline 3L*pi. ")
+        output.write("Fair rotation chooses equally among the three two-attendee profiles.\n")
+        output.write("A dash in a gap column means the comparison is undefined or rotation is not an equilibrium.\n\n")
+        print_cost_grid(rows, output=output)
+
+    return path
+
 # compute obedience gain = payoff from current action - payoff when change action
 # Obedience gain is payoff from following the assigned action minus deviating.
 # Negative gain means the player prefers to switch at this profile.
@@ -156,7 +331,7 @@ def welfare_vector(pi, beta, infection_cost, home_cost):
     """Total payoff for each profile, in all_action_profiles() order."""
     values = []
     for profile in all_action_profiles():
-        # TODO: tính total_payoff của profile rồi append vào values
+        # calculate total_payoff for each profile then append to values
         profile_total_payoff = total_payoff(profile, pi, beta, infection_cost, home_cost)
         values.append(profile_total_payoff)
     return values
@@ -305,6 +480,22 @@ def print_rotation_pi_grid(beta, infection_cost, home_cost):
 # Report the baseline game, optimal correlated lottery, and c/pi exploration.
 # All displayed values use the same explicit parameter dictionary.
 def main():
+    parser = argparse.ArgumentParser(description="Three-person attendance game")
+    parser.add_argument(
+        "--cost-grid-output",
+        type=Path,
+        help="Write the c/pi cost grid as a text table",
+    )
+    args = parser.parse_args()
+
+    if args.cost_grid_output is not None:
+        pi_values = np.round(np.arange(0.05, 0.96, 0.05), 2)
+        home_cost_values = np.round(np.arange(0.01, 0.201, 0.01), 2)
+        rows = cost_grid(pi_values, home_cost_values, beta=0.04, infection_cost=10)
+        path = write_cost_grid_text(args.cost_grid_output, rows, beta=0.04, infection_cost=10)
+        print(f"Saved {len(rows)} grid rows to {path}")
+        return
+
     params = dict(pi=0.1, beta=0.04, infection_cost=10, home_cost=0.05)
     print("Parameters:", params)
     profiles = all_action_profiles()

@@ -1,8 +1,8 @@
 """Analyze daily versus weekly switching from saved community SIS paths.
 
 Example:
-    .venv/bin/python analyze_weekly_advantage.py \
-        community_results/beta0085_20w50r.npz
+    .venv/bin/python network_sis/analyze_weekly_advantage.py \
+        network_sis/beta0085_20w50r.npz
 
 This script reads an existing NPZ file. It does not simulate new epidemics.
 """

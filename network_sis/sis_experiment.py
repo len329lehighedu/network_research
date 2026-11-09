@@ -1,7 +1,7 @@
 """Compare attendance schedules in a stochastic SIS contact network.
 
-Run ``python sis_experiment.py --sanity`` for model checks, then run
-``python sis_experiment.py`` for the default 20-world experiment.
+Run ``python network_sis/sis_experiment.py --sanity`` for model checks, then run
+``python network_sis/sis_experiment.py`` for the default 20-world experiment.
 """
 
 import argparse
@@ -991,7 +991,7 @@ def main() -> None:
         print_beta_sweep(summary)
         thresholds = run_threshold_experiment(args.worlds)
         print_threshold_table(thresholds)
-        plot_beta_sweep(summary, args.plot_path or Path("sis_beta_sweep.png"))
+        plot_beta_sweep(summary, args.plot_path or Path("graphs/reproduced_sis_beta_sweep.png"))
         return
 
     if args.figure != "multiworld":
@@ -999,9 +999,9 @@ def main() -> None:
         varied_phase = args.figure == "varied-phase"
         runs = 1 if args.figure == "single" else args.figure_runs
         default_names = {
-            "single": "sis_single_run.png",
-            "fixed-phase": "sis_mean_1000_runs.png",
-            "varied-phase": "sis_mean_1000_runs_startdate.png",
+            "single": "graphs/reproduced_sis_single_run.png",
+            "fixed-phase": "graphs/reproduced_sis_mean_1000_runs.png",
+            "varied-phase": "graphs/reproduced_sis_mean_1000_runs_startdate.png",
         }
         results = run_figure_experiment(runs, varied_phase)
         print_figure_results(results, varied_phase)
@@ -1016,7 +1016,7 @@ def main() -> None:
     # Print the seven-schedule table and paired comparisons before saving plot.
     print_results(world_runs, contact_days, args.beta)
     print_world_comparisons(world_runs)
-    plot_results(world_runs, args.plot_path or Path("sis_mean_multiworld.png"))
+    plot_results(world_runs, args.plot_path or Path("graphs/reproduced_sis_mean_multiworld.png"))
 
 
 if __name__ == "__main__":

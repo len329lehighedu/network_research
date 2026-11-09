@@ -89,11 +89,11 @@ Positive values indicate fewer infections or more extinction under weekly switch
 [`beta0085_20w50r.npz`](beta0085_20w50r.npz) stores all 12 trajectory arrays with shape **(world, run, day) = (20, 50, 85)**, one active-contact-day array per scenario with shape **(20,)**, and the model settings. It is a NumPy data archive for scripts, rather than a document to open manually. From the repository root, inspect it with:
 
 ```bash
-.venv/bin/python - <<'PY'
+PYTHONPATH=network_sis .venv/bin/python - <<'PY'
 from network_communities import load_community_data
 
 paths, contacts, settings = load_community_data(
-    "community_results/beta0085_20w50r.npz"
+    "network_sis/beta0085_20w50r.npz"
 )
 print(settings)
 print(paths[("whole", "rotating", 7)].shape)
@@ -104,24 +104,23 @@ PY
 Recalculate the weekly, survivor, deterministic, and linearized tables **from the saved data and the same seeded worlds**, without rerunning stochastic epidemic trajectories:
 
 ```bash
-.venv/bin/python analyze_weekly_advantage.py \
-  community_results/beta0085_20w50r.npz \
+.venv/bin/python network_sis/analyze_weekly_advantage.py \
+  network_sis/beta0085_20w50r.npz \
   --deterministic --linearized
 ```
 
 To regenerate all stochastic trajectories from scratch, write to a separate output path so the archived data remains available for comparison:
 
 ```bash
-mkdir -p reproduced
-.venv/bin/python -u network_communities.py \
+.venv/bin/python -u network_sis/network_communities.py \
   --worlds 20 --runs-per-world 50 --beta 0.085 \
-  --save-data reproduced/beta0085_20w50r.npz
+  --save-data network_sis/reproduced_beta0085_20w50r.npz
 ```
 
 The early-growth threshold table can be regenerated separately:
 
 ```bash
-.venv/bin/python - <<'PY'
+PYTHONPATH=network_sis .venv/bin/python - <<'PY'
 from network_communities import (
     print_community_threshold_table,
     run_community_threshold_experiment,
@@ -131,4 +130,4 @@ print_community_threshold_table(run_community_threshold_experiment(20))
 PY
 ```
 
-The code is in [`network_communities.py`](../network_communities.py), [`analyze_weekly_advantage.py`](../analyze_weekly_advantage.py), and [`sis_experiment.py`](../sis_experiment.py). Results at β = 0.085 describe this experiment; they are not a sweep over β for the community network.
+The code is in [`network_communities.py`](network_communities.py), [`analyze_weekly_advantage.py`](analyze_weekly_advantage.py), and [`sis_experiment.py`](sis_experiment.py). Results at β = 0.085 describe this experiment; they are not a sweep over β for the community network.

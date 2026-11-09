@@ -2,3 +2,7 @@
 __pycache__/
 *.py[cod]
 .DS_Store
+graphs/reproduced_*.png
+network_sis/reproduced_*.txt
+network_sis/reproduced_*.npz
+game/reproduced_*.txt

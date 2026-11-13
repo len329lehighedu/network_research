@@ -130,4 +130,57 @@ print_community_threshold_table(run_community_threshold_experiment(20))
 PY
 ```
 
-The code is in [`network_communities.py`](network_communities.py), [`analyze_weekly_advantage.py`](analyze_weekly_advantage.py), and [`sis_experiment.py`](sis_experiment.py). Results at β = 0.085 describe this experiment; they are not a sweep over β for the community network.
+The code is in [`network_communities.py`](network_communities.py), [`analyze_weekly_advantage.py`](analyze_weekly_advantage.py), and [`sis_experiment.py`](sis_experiment.py). The tables above use β = 0.085. The contact-value sweep below uses additional saved community-network simulations.
+
+## 6. Contact-value welfare and obedience sweep (point estimates)
+
+The archived community trajectories now cover β = 0.04, 0.05, 0.06, 0.07, 0.08, 0.085, 0.09, 0.10, 0.11, and 0.12. Each `betaXXXX_20w50r.npz` contains 20 worlds, 50 runs per world, 84 simulated days, and the same 12 scenarios. The seeded worlds, group splits, initial infections, and run phases follow the same procedure at every β. The additional archives were generated on 2026-11-12; β = 0.085 is the earlier archive.
+
+Use $v$ per person per active contact day, $c=0.05$ per scheduled day at home excluding contact value, $L_{\mathrm{day}}=10$ per infected person-day, and $\gamma=0.2$. For private obedience, the new-infection cost is approximated by $L_{\mathrm{day}}/\gamma$, with prevalence from the start of the decision day. For welfare, infected person-days are summed over saved days 1–84, matching the original outcome table. An active edge-day contributes $2v$ to welfare. Because every rotating split schedules 100 people home per day, the $c$ term cancels in split comparisons.
+
+For `whole` against split $B$, the mean-welfare break-even value is
+
+\[
+v^*_{\mathrm{whole},B}=\frac{L_{\mathrm{day}}\left(\overline{I}_{\mathrm{whole}}-\overline{I}_{B}\right)}{2\left(\overline{C}_{\mathrm{whole}}-\overline{C}_{B}\right)},
+\]
+
+where $\overline{I}$ is mean infected person-days per run and $\overline{C}$ is mean active edge-days per world. These are point estimates, not confidence intervals.
+
+| β | Daily: whole–random $v^*$ | Daily: whole–even $v^*$ | Weekly: whole–random $v^*$ | Weekly: whole–even $v^*$ |
+|---:|---:|---:|---:|---:|
+| 0.040 | 0.0191 | 0.0200 | 0.0195 | 0.0195 |
+| 0.050 | 0.0361 | 0.0369 | 0.0358 | 0.0372 |
+| 0.060 | 0.0738 | 0.0725 | 0.0768 | 0.0768 |
+| 0.070 | 0.1676 | 0.1644 | 0.1449 | 0.1430 |
+| 0.080 | 0.3366 | 0.3313 | 0.2847 | 0.2765 |
+| 0.085 | 0.4648 | 0.4564 | 0.3705 | 0.3582 |
+| 0.090 | 0.6002 | 0.5858 | 0.4849 | 0.4667 |
+| 0.100 | 0.9444 | 0.9281 | 0.7116 | 0.6869 |
+| 0.110 | 1.3211 | 1.2925 | 0.9786 | 0.9480 |
+| 0.120 | 1.6131 | 1.5878 | 1.2201 | 1.1912 |
+
+At each pair's own $v^*$, the calculated private deviation shares over scheduled person-days have the following ranges across all 10 β values and both switching frequencies:
+
+| Split | Scheduled home: all $k$ | Scheduled home: $k>0$ only | Scheduled attending: all $k$ | Scheduled home with $k=0$ |
+|---|---:|---:|---:|---:|
+| Whole | 0.838–1.000 | 0.764–1.000 | 0.000–0.273 | 0.315 |
+| Random or even | 0.886–1.000 | 0.884–1.000 | 0.000–0.114 | approximately 0.013 or 0.011 |
+
+For a scheduled-home person with $k=0$, attendance gain equals $c>0$, regardless of $v$ and β. The high home-deviation shares also persist when these zero-contact slots are excluded. These shares are predictions from unilateral payoff comparisons along trajectories simulated under full schedule compliance; they are **person-day shares**, not shares of unique people or outcomes after people actually deviate. The `1.000` and `0.000` displays in the exploratory terminal output were rounded to three decimals.
+
+### Paired-world bootstrap uncertainty
+
+An exploratory paired bootstrap used 1,000 resamples of the 20 worlds (seed 417) for each of the 10 β values, two switching frequencies, and two comparisons. Each resample recomputed its own $v^*$ from the sampled worlds, then evaluated both splits' deviation shares at that same $v^*$. Intervals below are pointwise percentile 95% intervals; they are not adjusted for the 40 comparisons.
+
+At β = 0.085, the four paired comparisons are:
+
+| Switch | Comparison | $v^*$ [95% interval] | Whole: home deviation, $k>0$ [95% interval] | Comparison: home deviation, $k>0$ [95% interval] | Whole: attend deviation [95% interval] |
+|---|---|---:|---:|---:|---:|
+| Daily | Random | 0.465 [0.425, 0.509] | 0.863 [0.849, 0.874] | 1.000 [1.000, 1.000] | 0.151 [0.137, 0.166] |
+| Daily | Even | 0.456 [0.421, 0.495] | 0.853 [0.842, 0.866] | 1.000 [1.000, 1.000] | 0.162 [0.148, 0.173] |
+| Weekly | Random | 0.371 [0.338, 0.406] | 0.807 [0.794, 0.822] | 0.999 [0.997, 1.000] | 0.214 [0.198, 0.234] |
+| Weekly | Even | 0.358 [0.331, 0.386] | 0.794 [0.782, 0.803] | 0.999 [0.998, 1.000] | 0.235 [0.220, 0.248] |
+
+Across all 40 comparisons, the point estimates for Whole's home-deviation share conditional on $k>0$ range from 0.764 to 1.000. The smallest lower endpoint of their pointwise 95% intervals is 0.737 (β = 0.12, weekly, Whole–Even). For Random or Even, the corresponding point estimates range from 0.884 to 1.000, and the smallest lower interval endpoint is 0.875. The pattern therefore persists after excluding zero-contact slots and allowing the break-even value to vary with sampled worlds.
+
+At $v=v^*$, mean welfare is equal by construction. For values just above $v^*$, Whole has higher estimated welfare under full compliance; home-deviation incentives are nondecreasing in $v$. This is evidence of a welfare–obedience tension within the specified model, not a prediction of epidemic outcomes after noncompliance. Before a paper table, increase bootstrap draws and decide whether to report a unique-person measure in addition to person-day shares.

@@ -2,7 +2,7 @@
 
 Example:
     .venv/bin/python network_sis/analyze_weekly_advantage.py \
-        network_sis/beta0085_20w50r.npz
+        network_sis/data/beta0085_20w50r.npz
 
 This script reads an existing NPZ file. It does not simulate new epidemics.
 """

@@ -1,4 +1,4 @@
-"""Print the README contact-value tables from saved experiment data."""
+"""Print contact-value results from saved experiment data."""
 
 import argparse
 import csv
@@ -130,14 +130,46 @@ def print_atlas_tables(path):
     ))
 
 
+def print_full_atlas_table(path):
+    """Print all network and parameter combinations in Report 4 order."""
+    settings = ("pi", "c", "atlas_id", "n", "edges", "pure_nash_count")
+    outcomes = (
+        "best_pure_nash", "lowest_independent_nash_found", "best_ce",
+        "social_minimum", "highest_individual_ce_cost", "ce_gain_vs_pure",
+        "ce_gain_vs_independent_found",
+    )
+    headers = (
+        "π", "c", "Atlas ID", "People", "Edges", "Pure Nash count",
+        "Best pure Nash cost", "Lowest independent Nash cost found", "Best CE cost",
+        "Social minimum", "Highest individual CE cost", "CE gain vs. pure",
+        "CE gain vs. independent found",
+    )
+
+    def format_cost(value):
+        if not value:
+            return "—"
+        cost = float(value)
+        return "0.000000" if abs(cost) < 0.0000005 else f"{cost:.6f}"
+
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = csv.DictReader(handle)
+        print_table(headers, (
+            (*(row[key] for key in settings), *(format_cost(row[key]) for key in outcomes))
+            for row in rows
+        ))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     inputs = parser.add_mutually_exclusive_group(required=True)
     inputs.add_argument("--community-dir", type=Path)
     inputs.add_argument("--atlas-csv", type=Path)
+    inputs.add_argument("--atlas-full", type=Path, metavar="CSV")
     args = parser.parse_args()
     if args.community_dir is not None:
         print_community_tables(args.community_dir)
+    elif args.atlas_full is not None:
+        print_full_atlas_table(args.atlas_full)
     else:
         print_atlas_tables(args.atlas_csv)
 

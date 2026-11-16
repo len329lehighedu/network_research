@@ -369,6 +369,9 @@ def sis_step(
     beta: float,
     gamma: float,
     rng: np.random.Generator,
+    *,
+    infection_draws: np.ndarray | None = None,
+    recovery_draws: np.ndarray | None = None,
 ) -> np.ndarray:
     """Advance one day, reading only start-of-day states for transmission."""
     next_infected = infected.copy()
@@ -376,7 +379,10 @@ def sis_step(
     for person in graph.nodes:
         if infected[person]:
             # Infected people can recover even when they stay home.
-            if rng.random() < gamma:
+            recovery_draw = (
+                rng.random() if recovery_draws is None else recovery_draws[person]
+            )
+            if recovery_draw < gamma:
                 next_infected[person] = False
         elif present[person]:
             # A susceptible person can be infected by attending infected neighbors.
@@ -385,7 +391,10 @@ def sis_step(
                 for neighbor in graph.neighbors(person)
             )
             infection_probability = 1 - (1 - beta) ** infectious_neighbors
-            if rng.random() < infection_probability:
+            infection_draw = (
+                rng.random() if infection_draws is None else infection_draws[person]
+            )
+            if infection_draw < infection_probability:
                 next_infected[person] = True
 
     return next_infected

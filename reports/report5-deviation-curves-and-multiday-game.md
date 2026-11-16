@@ -836,3 +836,18 @@ PYTHONPATH=. .venv/bin/python game/summarize_multiday_benchmark.py \
 Each replicate pairs infection and recovery draws by person and day across policies. Daily CE updates recommendations using current prevalence and the one-day payoff. Follow rates are based on actual actions and are defined when a policy gives recommendations.
 
 The mean payoff advantage of daily CE over no recommendation decreases as contact value rises. At $v=0.28$, both intervals for that contrast include zero. Fixed rotation has the fewest infected person-days at $v=0.28$. Daily CE retains more contacts and has higher mean group payoff in those comparisons.
+
+### Sensitivity to attendance revision in the no-recommendation benchmark
+
+At $v=0.28$, each player in the no-recommendation benchmark reconsidered attendance each day with probability $p$. Players who did not reconsider kept their previous action. Daily CE and fixed rotation had identical outcomes across the four settings for every matched replicate. Each setting uses 500 replicates per initial infection site over 14 days.
+
+The CE payoff advantage is the cumulative group payoff under daily CE minus the payoff under no recommendation at the indicated $p$. The change columns subtract the corresponding advantage at $p=1$. Brackets give pointwise 95% bootstrap intervals, with observations paired by replicate for both contrasts.
+
+Saved data by revision probability: [0.25](../game/data/multiday_v028_update025.csv), [0.50](../game/data/multiday_v028_update050.csv), [0.75](../game/data/multiday_v028_update075.csv), and [1.00](../game/data/multiday_v028.csv).
+
+| Daily revision probability $p$ | CE payoff advantage, bridge node 4 | CE payoff advantage, within-community node 0 | Change from $p=1$, bridge node 4 | Change from $p=1$, within-community node 0 |
+|---:|---:|---:|---:|---:|
+| 0.25 | +7.11 [3.87, 10.43] | +6.75 [3.90, 9.77] | +4.96 [1.50, 8.56] | +5.05 [1.73, 8.62] |
+| 0.50 | +2.89 [0.17, 5.61] | +2.83 [0.54, 5.03] | +0.74 [−2.44, 3.93] | +1.13 [−1.71, 3.94] |
+| 0.75 | +1.46 [−0.19, 3.21] | +1.31 [−0.38, 3.00] | −0.69 [−3.29, 1.62] | −0.40 [−3.31, 2.16] |
+| 1.00 | +2.15 [−0.12, 4.76] | +1.71 [−0.84, 4.67] | Reference | Reference |

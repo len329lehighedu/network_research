@@ -785,6 +785,31 @@ PYTHONPATH=.:game .venv/bin/python network_sis/reproduce_report3.py \
 | 0.28 | 4 | +33.62 [29.59, 37.69] | +2.15 [-0.12, 4.76] | -31.47 [-36.02, -26.70] |
 | 0.28 | 0 | +41.99 [38.48, 45.34] | +1.71 [-0.84, 4.67] | -40.28 [-44.43, -36.10] |
 
+### Breakdown of mean payoff differences
+
+Each component is the contribution to the payoff of the first policy minus the second. Positive values favor the first policy. Totals use unrounded values.
+
+| v | Initial case | Comparison | Contact benefit | Infection cost savings | Home cost savings | Group payoff difference |
+|---|---|---|---|---|---|---|
+| 0.00 | 4 | Daily CE − Fixed rotation | +0.00 | +2.10 | +0.46 | +2.56 |
+| 0.00 | 4 | Daily CE − No recommendation | +0.00 | +19.60 | -0.41 | +19.19 |
+| 0.00 | 4 | Fixed rotation − No recommendation | +0.00 | +17.50 | -0.87 | +16.63 |
+| 0.00 | 0 | Daily CE − Fixed rotation | +0.00 | +7.64 | +0.60 | +8.24 |
+| 0.00 | 0 | Daily CE − No recommendation | +0.00 | +18.18 | -0.39 | +17.79 |
+| 0.00 | 0 | Fixed rotation − No recommendation | +0.00 | +10.54 | -0.99 | +9.55 |
+| 0.14 | 4 | Daily CE − Fixed rotation | +9.08 | +9.96 | +0.44 | +19.48 |
+| 0.14 | 4 | Daily CE − No recommendation | -10.47 | +17.90 | -0.33 | +7.11 |
+| 0.14 | 4 | Fixed rotation − No recommendation | -19.55 | +7.94 | -0.77 | -12.37 |
+| 0.14 | 0 | Daily CE − Fixed rotation | +12.87 | +9.38 | +0.63 | +22.88 |
+| 0.14 | 0 | Daily CE − No recommendation | -9.49 | +18.00 | -0.27 | +8.23 |
+| 0.14 | 0 | Fixed rotation − No recommendation | -22.37 | +8.62 | -0.90 | -14.65 |
+| 0.28 | 4 | Daily CE − Fixed rotation | +34.59 | -1.94 | +0.97 | +33.62 |
+| 0.28 | 4 | Daily CE − No recommendation | -6.08 | +8.28 | -0.05 | +2.15 |
+| 0.28 | 4 | Fixed rotation − No recommendation | -40.67 | +10.22 | -1.02 | -31.47 |
+| 0.28 | 0 | Daily CE − Fixed rotation | +43.25 | -2.46 | +1.19 | +41.99 |
+| 0.28 | 0 | Daily CE − No recommendation | -5.64 | +7.40 | -0.05 | +1.71 |
+| 0.28 | 0 | Fixed rotation − No recommendation | -48.89 | +9.86 | -1.25 | -40.28 |
+
 ### Reproduce the multiday tables
 
 [CSV for v = 0.00](../game/data/multiday_v000.csv) · [CSV for v = 0.14](../game/data/multiday_v014.csv) · [CSV for v = 0.28](../game/data/multiday_v028.csv)

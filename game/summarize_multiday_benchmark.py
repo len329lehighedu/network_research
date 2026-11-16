@@ -57,7 +57,7 @@ def load_benchmark_groups(paths):
 
     if not groups:
         raise ValueError("No benchmark observations found.")
-    return groups
+    return groups, dict(zip(SETTINGS, expected_settings, strict=True))
 
 
 def print_table(headers, rows):
@@ -67,9 +67,10 @@ def print_table(headers, rows):
         print("| " + " | ".join(map(str, row)) + " |")
 
 
-def print_benchmark_tables(groups):
+def print_benchmark_tables(groups, infection_cost, home_cost):
     outcome_rows = []
     contrast_rows = []
+    breakdown_rows = []
     policy_pairs = tuple(combinations(POLICIES, 2))
 
     for v, initial_case in sorted(groups, key=lambda group: (group[0], -group[1])):
@@ -96,6 +97,15 @@ def print_benchmark_tables(groups):
         for policy_a, policy_b in policy_pairs:
             mean, lower, upper = paired_payoff_difference_ci(rows, policy_a, policy_b, rng)
             contrasts.append(f"{mean:+.2f} [{lower:.2f}, {upper:.2f}]")
+            a, b = summaries[policy_a], summaries[policy_b]
+            contact_benefit = 2 * v * (a["active_edge_days"] - b["active_edge_days"])
+            infection_savings = infection_cost * (b["infected_person_days"] - a["infected_person_days"])
+            home_savings = home_cost * (a["attendance_person_days"] - b["attendance_person_days"])
+            breakdown_rows.append((
+                *label,
+                f"{LABELS[policy_a]} − {LABELS[policy_b]}",
+                *(f"{value + 0.0:+.2f}" for value in (contact_benefit, infection_savings, home_savings, mean)),
+            ))
         contrast_rows.append((*label, *contrasts))
 
     print("### Mean outcomes per run\n")
@@ -105,12 +115,19 @@ def print_benchmark_tables(groups):
     print("\n### Payoff differences with 95% paired bootstrap intervals\n")
     print_table(("v", "Initial case", *(f"{LABELS[a]} − {LABELS[b]}" for a, b in policy_pairs)), contrast_rows)
 
+    print("\n### Breakdown of mean payoff differences\n")
+    print("Each component is the contribution to the payoff of the first policy minus the second. "
+          "Positive values favor the first policy. Totals use unrounded values.\n")
+    print_table(("v", "Initial case", "Comparison", "Contact benefit", "Infection cost savings",
+                 "Home cost savings", "Group payoff difference"), breakdown_rows)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv_paths", metavar="CSV", type=Path, nargs="+")
     args = parser.parse_args()
-    print_benchmark_tables(load_benchmark_groups(args.csv_paths))
+    groups, settings = load_benchmark_groups(args.csv_paths)
+    print_benchmark_tables(groups, settings["L_day"], settings["c"])
 
 
 if __name__ == "__main__":

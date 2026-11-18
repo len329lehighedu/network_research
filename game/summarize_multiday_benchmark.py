@@ -62,6 +62,11 @@ def load_benchmark_groups(paths):
                     "follow_rate": float(follow_rate) if follow_rate else None,
                     # Empty means the policy has no willingness.
                     "final_mean_willingness": float(willingness) if willingness else None,
+                    # Older CSVs have no day-0 or day-7 columns, so those count as missing.
+                    **{
+                        column: float(row[column]) if row.get(column) else None
+                        for column in ("willingness_d0", "willingness_d7")
+                    },
                 })
 
     if not groups:
@@ -74,6 +79,72 @@ def print_table(headers, rows):
     print("|" + "|".join("---" for _ in headers) + "|")
     for row in rows:
         print("| " + " | ".join(map(str, row)) + " |")
+
+
+def bootstrap_mean_ci(values, rng, draws=2000):
+    """Return the mean of values and its 95% percentile bootstrap interval."""
+    values = np.asarray(values, dtype=float)
+    means = np.array([
+        values[rng.integers(0, len(values), len(values))].mean() for _ in range(draws)
+    ])
+    return values.mean(), *np.percentile(means, [2.5, 97.5])
+
+
+def print_willingness_path_table(paths):
+    """Compare the fixed-rotation willingness path under v2 and v2_shuffled."""
+    # Collect each fixed-rotation replicate's willingness on days 0, 7, and 14,
+    # keyed by (behavior, v, initial case, replicate). The day-7 column exists
+    # only in CSVs written after it was added.
+    paths_by_key = {}
+    for path in paths:
+        with path.open(newline="", encoding="utf-8") as handle:
+            for row in csv.DictReader(handle):
+                if row["policy"] != "fixed_rotation" or row["rotation_belief"] != "schedule":
+                    continue
+                if row["behavior"] not in ("v2", "v2_shuffled"):
+                    continue
+                key = (row["behavior"], float(row["v"]), int(row["initial_case"]), int(row["replicate"]))
+                paths_by_key[key] = tuple(
+                    float(row[column])
+                    for column in ("willingness_d0", "willingness_d7", "final_mean_willingness")
+                )
+
+    rows = []
+    cells = sorted({(v, case) for _, v, case, _ in paths_by_key}, key=lambda cell: (cell[0], -cell[1]))
+    for v, case in cells:
+        # Pair the two behaviors by replicate. Both start from the same willingness
+        # stream, so a replicate has the same day-0 willingness under each.
+        replicates = sorted(
+            {r for b, vv, cc, r in paths_by_key if (b, vv, cc) == ("v2", v, case)}
+            & {r for b, vv, cc, r in paths_by_key if (b, vv, cc) == ("v2_shuffled", v, case)}
+        )
+        if len(replicates) < 2:
+            raise ValueError(f"Need v2 and v2_shuffled replicates for v={v:g}, node {case}.")
+        path = {
+            behavior: np.array([paths_by_key[behavior, v, case, r] for r in replicates])
+            for behavior in ("v2", "v2_shuffled")
+        }
+        if not np.allclose(path["v2"][:, 0], path["v2_shuffled"][:, 0]):
+            raise ValueError(f"Day-0 willingness differs between behaviors for v={v:g}, node {case}.")
+
+        # One bootstrap stream per cell, used in a fixed order: v2, v2_shuffled, difference.
+        rng = np.random.default_rng(456)
+        change = {behavior: values[:, 2] - values[:, 0] for behavior, values in path.items()}
+        change_ci = {behavior: bootstrap_mean_ci(change[behavior], rng) for behavior in ("v2", "v2_shuffled")}
+        difference = bootstrap_mean_ci(change["v2"] - change["v2_shuffled"], rng)
+
+        for behavior in ("v2", "v2_shuffled"):
+            mean_change, lower, upper = change_ci[behavior]
+            d0, d7, d14 = path[behavior].mean(axis=0)
+            rows.append((
+                behavior, f"{v:.2f}", case, len(replicates), f"{d0:.3f}", f"{d7:.3f}", f"{d14:.3f}",
+                f"{mean_change:+.3f} [{lower:+.3f}, {upper:+.3f}]",
+                f"{difference[0]:+.3f} [{difference[1]:+.3f}, {difference[2]:+.3f}]" if behavior == "v2" else "",
+            ))
+
+    print("### Fixed-rotation willingness under v2 and v2_shuffled\n")
+    print_table(("Behavior", "v", "Initial case", "Runs", "Day 0", "Day 7", "Day 14",
+                 "Day 14 − day 0", "v2 − v2_shuffled (day 14 − day 0)"), rows)
 
 
 def print_benchmark_tables(groups, infection_cost, home_cost):
@@ -142,7 +213,14 @@ def print_benchmark_tables(groups, infection_cost, home_cost):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv_paths", metavar="CSV", type=Path, nargs="+")
+    parser.add_argument(
+        "--willingness-path", action="store_true",
+        help="Print the fixed-rotation willingness table for v2 versus v2_shuffled instead.",
+    )
     args = parser.parse_args()
+    if args.willingness_path:
+        print_willingness_path_table(args.csv_paths)
+        return
     groups, settings = load_benchmark_groups(args.csv_paths)
     print_benchmark_tables(groups, settings["L_day"], settings["c"])
 

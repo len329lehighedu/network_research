@@ -1,0 +1,252 @@
+
+Initial infection: node 4, v=0, behavior=v1
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+lookahead_exact table differs from daily_ce in 126 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 126 of 154 cells
+daily_ce: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_exact: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0, behavior=v1
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+lookahead_exact table differs from daily_ce in 126 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 126 of 154 cells
+daily_ce: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_exact: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v1_v000.csv and value tables to reinforcement_learning/data/lookahead_exact_v1_v000.npz
+
+Initial infection: node 4, v=0.14, behavior=v1
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+lookahead_exact table differs from daily_ce in 121 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 120 of 154 cells
+daily_ce: infected person-days=4.09, group payoff=11.06, follow rate=1.000
+lookahead_belief: infected person-days=4.19, group payoff=10.27, follow rate=1.000
+lookahead_mc: infected person-days=4.18, group payoff=10.41, follow rate=1.000
+lookahead_exact: infected person-days=4.18, group payoff=10.43, follow rate=1.000
+lookahead_exact_mc: infected person-days=4.09, group payoff=11.37, follow rate=1.000
+lookahead_belief - daily_ce: -0.79 [-2.77, 1.13]
+lookahead_mc - daily_ce: -0.65 [-2.76, 1.22]
+lookahead_exact - daily_ce: -0.63 [-2.50, 1.34]
+lookahead_exact_mc - daily_ce: 0.31 [-1.54, 2.13]
+lookahead_mc - lookahead_belief: 0.15 [-0.09, 0.54]
+lookahead_exact - lookahead_belief: 0.16 [-0.48, 0.93]
+lookahead_exact_mc - lookahead_belief: 1.10 [0.28, 2.06]
+lookahead_exact - lookahead_mc: 0.02 [-0.56, 0.65]
+lookahead_exact_mc - lookahead_mc: 0.96 [0.24, 1.82]
+lookahead_exact_mc - lookahead_exact: 0.94 [0.26, 1.77]
+
+Initial infection: node 0, v=0.14, behavior=v1
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+lookahead_exact table differs from daily_ce in 121 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 120 of 154 cells
+daily_ce: infected person-days=3.79, group payoff=15.48, follow rate=1.000
+lookahead_belief: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_mc: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_exact: infected person-days=3.79, group payoff=15.75, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.79, group payoff=15.68, follow rate=1.000
+lookahead_belief - daily_ce: 0.02 [-0.26, 0.23]
+lookahead_mc - daily_ce: 0.03 [-0.24, 0.23]
+lookahead_exact - daily_ce: 0.26 [0.18, 0.34]
+lookahead_exact_mc - daily_ce: 0.20 [0.13, 0.28]
+lookahead_mc - lookahead_belief: 0.00 [-0.01, 0.01]
+lookahead_exact - lookahead_belief: 0.24 [0.04, 0.51]
+lookahead_exact_mc - lookahead_belief: 0.18 [-0.02, 0.44]
+lookahead_exact - lookahead_mc: 0.24 [0.04, 0.53]
+lookahead_exact_mc - lookahead_mc: 0.17 [-0.03, 0.44]
+lookahead_exact_mc - lookahead_exact: -0.06 [-0.08, -0.05]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v1_v014.csv and value tables to reinforcement_learning/data/lookahead_exact_v1_v014.npz
+
+Initial infection: node 4, v=0.28, behavior=v1
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+lookahead_exact table differs from daily_ce in 96 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 96 of 154 cells
+daily_ce: infected person-days=7.71, group payoff=65.67, follow rate=1.000
+lookahead_belief: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_mc: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_exact: infected person-days=7.78, group payoff=65.14, follow rate=1.000
+lookahead_exact_mc: infected person-days=7.77, group payoff=65.35, follow rate=1.000
+lookahead_belief - daily_ce: -0.39 [-1.54, 0.47]
+lookahead_mc - daily_ce: -0.39 [-1.47, 0.47]
+lookahead_exact - daily_ce: -0.54 [-1.66, 0.38]
+lookahead_exact_mc - daily_ce: -0.33 [-1.31, 0.49]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: -0.14 [-0.19, -0.10]
+lookahead_exact_mc - lookahead_belief: 0.07 [-0.19, 0.52]
+lookahead_exact - lookahead_mc: -0.14 [-0.19, -0.10]
+lookahead_exact_mc - lookahead_mc: 0.07 [-0.19, 0.53]
+lookahead_exact_mc - lookahead_exact: 0.21 [-0.01, 0.65]
+
+Initial infection: node 0, v=0.28, behavior=v1
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+lookahead_exact table differs from daily_ce in 96 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 96 of 154 cells
+daily_ce: infected person-days=7.03, group payoff=74.97, follow rate=1.000
+lookahead_belief: infected person-days=7.11, group payoff=74.34, follow rate=1.000
+lookahead_mc: infected person-days=7.08, group payoff=74.73, follow rate=1.000
+lookahead_exact: infected person-days=7.10, group payoff=74.37, follow rate=1.000
+lookahead_exact_mc: infected person-days=7.10, group payoff=74.37, follow rate=1.000
+lookahead_belief - daily_ce: -0.63 [-1.73, 0.15]
+lookahead_mc - daily_ce: -0.25 [-0.79, 0.21]
+lookahead_exact - daily_ce: -0.61 [-1.68, 0.12]
+lookahead_exact_mc - daily_ce: -0.61 [-1.68, 0.13]
+lookahead_mc - lookahead_belief: 0.39 [-0.13, 1.29]
+lookahead_exact - lookahead_belief: 0.03 [-0.14, 0.33]
+lookahead_exact_mc - lookahead_belief: 0.03 [-0.14, 0.33]
+lookahead_exact - lookahead_mc: -0.36 [-1.41, 0.33]
+lookahead_exact_mc - lookahead_mc: -0.36 [-1.38, 0.33]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v1_v028.csv and value tables to reinforcement_learning/data/lookahead_exact_v1_v028.npz
+
+Initial infection: node 4, v=0, behavior=v2
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+lookahead_exact table differs from daily_ce in 126 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 126 of 154 cells
+daily_ce: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_exact: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0, behavior=v2
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+lookahead_exact table differs from daily_ce in 126 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 126 of 154 cells
+daily_ce: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_exact: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact - daily_ce: 0.00 [0.00, 0.00]
+lookahead_exact_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_mc: 0.00 [0.00, 0.00]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v2_v000.csv and value tables to reinforcement_learning/data/lookahead_exact_v2_v000.npz
+
+Initial infection: node 4, v=0.14, behavior=v2
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+lookahead_exact table differs from daily_ce in 121 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 120 of 154 cells
+daily_ce: infected person-days=4.09, group payoff=11.06, follow rate=1.000
+lookahead_belief: infected person-days=4.19, group payoff=10.27, follow rate=1.000
+lookahead_mc: infected person-days=4.18, group payoff=10.41, follow rate=1.000
+lookahead_exact: infected person-days=4.18, group payoff=10.43, follow rate=1.000
+lookahead_exact_mc: infected person-days=4.09, group payoff=11.37, follow rate=1.000
+lookahead_belief - daily_ce: -0.79 [-2.77, 1.13]
+lookahead_mc - daily_ce: -0.65 [-2.76, 1.22]
+lookahead_exact - daily_ce: -0.63 [-2.50, 1.34]
+lookahead_exact_mc - daily_ce: 0.31 [-1.54, 2.13]
+lookahead_mc - lookahead_belief: 0.15 [-0.09, 0.54]
+lookahead_exact - lookahead_belief: 0.16 [-0.48, 0.93]
+lookahead_exact_mc - lookahead_belief: 1.10 [0.28, 2.06]
+lookahead_exact - lookahead_mc: 0.02 [-0.56, 0.65]
+lookahead_exact_mc - lookahead_mc: 0.96 [0.24, 1.82]
+lookahead_exact_mc - lookahead_exact: 0.94 [0.26, 1.77]
+
+Initial infection: node 0, v=0.14, behavior=v2
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+lookahead_exact table differs from daily_ce in 121 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 120 of 154 cells
+daily_ce: infected person-days=3.79, group payoff=15.48, follow rate=1.000
+lookahead_belief: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_mc: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_exact: infected person-days=3.79, group payoff=15.75, follow rate=1.000
+lookahead_exact_mc: infected person-days=3.79, group payoff=15.68, follow rate=1.000
+lookahead_belief - daily_ce: 0.02 [-0.26, 0.23]
+lookahead_mc - daily_ce: 0.03 [-0.24, 0.23]
+lookahead_exact - daily_ce: 0.26 [0.18, 0.34]
+lookahead_exact_mc - daily_ce: 0.20 [0.13, 0.28]
+lookahead_mc - lookahead_belief: 0.00 [-0.01, 0.01]
+lookahead_exact - lookahead_belief: 0.24 [0.04, 0.51]
+lookahead_exact_mc - lookahead_belief: 0.18 [-0.02, 0.44]
+lookahead_exact - lookahead_mc: 0.24 [0.04, 0.53]
+lookahead_exact_mc - lookahead_mc: 0.17 [-0.03, 0.44]
+lookahead_exact_mc - lookahead_exact: -0.06 [-0.08, -0.05]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v2_v014.csv and value tables to reinforcement_learning/data/lookahead_exact_v2_v014.npz
+
+Initial infection: node 4, v=0.28, behavior=v2
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+lookahead_exact table differs from daily_ce in 96 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 96 of 154 cells
+daily_ce: infected person-days=7.71, group payoff=65.67, follow rate=1.000
+lookahead_belief: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_mc: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_exact: infected person-days=7.78, group payoff=65.14, follow rate=1.000
+lookahead_exact_mc: infected person-days=7.77, group payoff=65.35, follow rate=1.000
+lookahead_belief - daily_ce: -0.39 [-1.54, 0.47]
+lookahead_mc - daily_ce: -0.39 [-1.47, 0.47]
+lookahead_exact - daily_ce: -0.54 [-1.66, 0.38]
+lookahead_exact_mc - daily_ce: -0.33 [-1.31, 0.49]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+lookahead_exact - lookahead_belief: -0.14 [-0.19, -0.10]
+lookahead_exact_mc - lookahead_belief: 0.07 [-0.19, 0.52]
+lookahead_exact - lookahead_mc: -0.14 [-0.19, -0.10]
+lookahead_exact_mc - lookahead_mc: 0.07 [-0.19, 0.53]
+lookahead_exact_mc - lookahead_exact: 0.21 [-0.01, 0.65]
+
+Initial infection: node 0, v=0.28, behavior=v2
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+lookahead_exact table differs from daily_ce in 96 of 154 cells
+lookahead_exact_mc table differs from daily_ce in 96 of 154 cells
+daily_ce: infected person-days=7.03, group payoff=74.97, follow rate=1.000
+lookahead_belief: infected person-days=7.11, group payoff=74.34, follow rate=1.000
+lookahead_mc: infected person-days=7.08, group payoff=74.73, follow rate=1.000
+lookahead_exact: infected person-days=7.10, group payoff=74.37, follow rate=1.000
+lookahead_exact_mc: infected person-days=7.10, group payoff=74.37, follow rate=1.000
+lookahead_belief - daily_ce: -0.63 [-1.73, 0.15]
+lookahead_mc - daily_ce: -0.25 [-0.79, 0.21]
+lookahead_exact - daily_ce: -0.61 [-1.68, 0.12]
+lookahead_exact_mc - daily_ce: -0.61 [-1.68, 0.13]
+lookahead_mc - lookahead_belief: 0.39 [-0.13, 1.29]
+lookahead_exact - lookahead_belief: 0.03 [-0.14, 0.33]
+lookahead_exact_mc - lookahead_belief: 0.03 [-0.14, 0.33]
+lookahead_exact - lookahead_mc: -0.36 [-1.41, 0.33]
+lookahead_exact_mc - lookahead_mc: -0.36 [-1.38, 0.33]
+lookahead_exact_mc - lookahead_exact: 0.00 [0.00, 0.00]
+
+Saved 5000 rows to reinforcement_learning/data/lookahead_exact_v2_v028.csv and value tables to reinforcement_learning/data/lookahead_exact_v2_v028.npz

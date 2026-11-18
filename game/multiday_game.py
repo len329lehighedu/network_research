@@ -164,7 +164,7 @@ def run_fixed_rotation_day(
 def run_fixed_rotation_trajectory(
     graph, initial_infected, daily_recommendations, willingness,
     beta, gamma, L_day, c, v, decision_rng, sis_rng, imitation_rng=None, *, infection_draws_by_day=None, recovery_draws_by_day=None,
-    belief="schedule",
+    belief="schedule", shuffle_rng=None,
 ):
     """Return infection, payoff, attendance, and willingness histories."""
     infected = initial_infected.copy()
@@ -198,7 +198,8 @@ def run_fixed_rotation_trajectory(
 
         # Update willingness for the next day using today's payoffs.
         if imitation_rng is not None:
-            willingness = update_willingness(graph, willingness, payoffs, imitation_rng)
+            willingness = update_willingness(
+                graph, willingness, imitation_payoffs(payoffs, shuffle_rng), imitation_rng)
 
         willingness_history.append(willingness.copy())
 
@@ -226,12 +227,13 @@ def initial_willingness(n_people, behavior, rng):
 
     # Version 2: each person draws willingness independently from Uniform[0, 1),
     # using the per-replicate stream so other RNG streams stay untouched.
-    if behavior == "v2":
+    # v2_shuffled starts from the same draw; only its imitation differs.
+    if behavior in ("v2", "v2_shuffled"):
         return rng.random(n_people)
 
     # Any other value is a bug in the caller, so fail loudly.
     raise ValueError(
-        f"Unknown behavior {behavior!r}; expected 'legacy', 'v1', or 'v2'."
+        f"Unknown behavior {behavior!r}; expected 'legacy', 'v1', 'v2', or 'v2_shuffled'."
     )
 
 
@@ -260,6 +262,22 @@ def rotation_forecast_profile(daily_recommendations, action_history, day, belief
     raise ValueError(
         f"Unknown belief {belief!r}; expected 'schedule' or 'last_same_phase'."
     )
+
+
+def shuffle_payoffs(payoffs, rng):
+    """Return a random permutation of today's payoffs, leaving the input unchanged."""
+    # Neutral imitation baseline (v2_shuffled): keep the same payoff values and
+    # ties, but break the link between a person's behavior and the payoff
+    # they are compared on.
+    # permutation returns a copy, so the real payoffs stay intact.
+    return rng.permutation(payoffs)
+
+
+def imitation_payoffs(payoffs, shuffle_rng):
+    """Return the payoffs people compare when imitating neighbors."""
+    # shuffle_rng is None except under v2_shuffled. Imitation then compares
+    # shuffled payoffs; outcomes and group payoff always keep the real ones.
+    return payoffs if shuffle_rng is None else shuffle_payoffs(payoffs, shuffle_rng)
 
 
 def update_willingness(graph, willingness, payoffs, rng):
@@ -362,6 +380,7 @@ def run_ce_day(
 def run_ce_trajectory(
     graph, initial_infected, days, willingness, beta, gamma, L_day, c, v,
     recommendation_rng, decision_rng, sis_rng, imitation_rng=None, *, infection_draws_by_day=None, recovery_draws_by_day=None,
+    shuffle_rng=None,
 ):
     """Return infection, payoff, recommendation, action, and willingness histories."""
     infected = initial_infected.copy()
@@ -392,7 +411,8 @@ def run_ce_trajectory(
 
         # Update willingness for the next day using today's realized payoffs.
         if imitation_rng is not None:
-            willingness = update_willingness(graph, willingness, payoffs, imitation_rng)
+            willingness = update_willingness(
+                graph, willingness, imitation_payoffs(payoffs, shuffle_rng), imitation_rng)
         willingness_history.append(willingness.copy())
 
     return (
@@ -500,9 +520,13 @@ def summarize_trajectory(graph, states, payoffs, actions, recommendations=None, 
         )
         follow_rate = matches / (len(actions) * graph.number_of_nodes())
 
-    # Average willingness on the last day; None when the policy has no willingness.
-    final_mean_willingness = None
+    # Average willingness on days 0, 7, and the last day (day 14 in the benchmark);
+    # None when the policy has no willingness. Row d of willingness_history is the
+    # willingness used on day d, and the last row is after the final update.
+    willingness_d0 = willingness_d7 = final_mean_willingness = None
     if willingness_history is not None:
+        willingness_d0 = float(willingness_history[0].mean())
+        willingness_d7 = float(willingness_history[7].mean())
         final_mean_willingness = float(willingness_history[-1].mean())
 
     return {
@@ -511,6 +535,8 @@ def summarize_trajectory(graph, states, payoffs, actions, recommendations=None, 
         "active_edge_days": active_edge_days,
         "group_payoff": float(payoffs.sum()),
         "follow_rate": follow_rate,
+        "willingness_d0": willingness_d0,
+        "willingness_d7": willingness_d7,
         "final_mean_willingness": final_mean_willingness,
     }
     
@@ -523,11 +549,12 @@ def compare_policies_once(
     """Run all three attendance policies from the same initial conditions."""
     params = dict(beta=beta, gamma=gamma, L_day=L_day, c=c, v=v)
 
-    # Give disease, decisions, imitation, recommendations, revisions, and starting
-    # willingness separate RNG streams. spawn keys children by index, so the first
-    # five streams stay identical to the old spawn(5) and legacy results reproduce.
+    # Give disease, decisions, imitation, recommendations, revisions, starting
+    # willingness, and payoff shuffling separate RNG streams. spawn keys children
+    # by index, so the first six streams stay identical to the old spawn(6) and
+    # earlier results reproduce.
     (sis_seed, decision_seed, imitation_seed, recommendation_seed, revision_seed,
-     willingness_seed) = np.random.SeedSequence(seed).spawn(6)
+     willingness_seed, shuffle_seed) = np.random.SeedSequence(seed).spawn(7)
     rng = np.random.default_rng
 
     # Build the starting willingness inside, so every replicate gets its own draw.
@@ -536,6 +563,9 @@ def compare_policies_once(
 
     # Version 1 has no peer imitation; legacy and v2 do.
     use_imitation = behavior != "v1"
+
+    # Only v2_shuffled permutes payoffs before imitation.
+    use_shuffle = behavior == "v2_shuffled"
     
     # Generate one infection draw and one recovery draw per day and person.
     sis_draw_rng = rng(sis_seed)
@@ -558,7 +588,8 @@ def compare_policies_once(
         graph, initial_infected, fixed_recommendations, willingness, **params,
         decision_rng=rng(decision_seed), sis_rng=rng(sis_seed),
         imitation_rng=rng(imitation_seed) if use_imitation else None,
-        belief=rotation_belief, **shared_draws
+        belief=rotation_belief, shuffle_rng=rng(shuffle_seed) if use_shuffle else None,
+        **shared_draws
     )
     results["fixed_rotation"] = summarize_trajectory(
         graph, states, payoffs, actions, fixed_recommendations, willingness_history)
@@ -567,7 +598,8 @@ def compare_policies_once(
         graph, initial_infected, days, willingness, **params,
         recommendation_rng=rng(recommendation_seed),
         decision_rng=rng(decision_seed), sis_rng=rng(sis_seed),
-        imitation_rng=rng(imitation_seed) if use_imitation else None, **shared_draws
+        imitation_rng=rng(imitation_seed) if use_imitation else None,
+        shuffle_rng=rng(shuffle_seed) if use_shuffle else None, **shared_draws
     )
     results["daily_ce"] = summarize_trajectory(
         graph, states, payoffs, actions, ce_recommendations, willingness_history)
@@ -616,6 +648,8 @@ def summarize_policy_replicates(rows):
         "active_edge_days",
         "group_payoff",
         "follow_rate",
+        "willingness_d0",
+        "willingness_d7",
         "final_mean_willingness",
     )
     summaries = {}

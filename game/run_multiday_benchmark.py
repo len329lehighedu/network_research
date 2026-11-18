@@ -23,7 +23,7 @@ def main():
         "--update-prob", type=float, default=1.0,
         help="Daily probability of reconsidering attendance without recommendations.",
     )
-    parser.add_argument("--behavior", choices=("legacy", "v1", "v2"), default="legacy")
+    parser.add_argument("--behavior", choices=("legacy", "v1", "v2", "v2_shuffled"), default="legacy")
     parser.add_argument("--rotation-belief", choices=("schedule", "last_same_phase"), default="schedule")
     args = parser.parse_args()
     if not 0.0 <= args.update_prob <= 1.0:

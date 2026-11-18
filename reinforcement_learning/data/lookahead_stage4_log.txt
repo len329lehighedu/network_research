@@ -1,0 +1,120 @@
+
+Initial infection: node 4, v=0, behavior=v1
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+daily_ce: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0, behavior=v1
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+daily_ce: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v1_v000.csv and value tables to reinforcement_learning/data/lookahead_v1_v000.npz
+
+Initial infection: node 4, v=0.14, behavior=v1
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+daily_ce: infected person-days=4.09, group payoff=11.06, follow rate=1.000
+lookahead_belief: infected person-days=4.19, group payoff=10.27, follow rate=1.000
+lookahead_mc: infected person-days=4.18, group payoff=10.41, follow rate=1.000
+lookahead_belief - daily_ce: -0.79 [-2.77, 1.13]
+lookahead_mc - daily_ce: -0.65 [-2.76, 1.22]
+lookahead_mc - lookahead_belief: 0.15 [-0.09, 0.54]
+
+Initial infection: node 0, v=0.14, behavior=v1
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+daily_ce: infected person-days=3.79, group payoff=15.48, follow rate=1.000
+lookahead_belief: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_mc: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_belief - daily_ce: 0.02 [-0.26, 0.23]
+lookahead_mc - daily_ce: 0.03 [-0.24, 0.23]
+lookahead_mc - lookahead_belief: 0.00 [-0.01, 0.01]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v1_v014.csv and value tables to reinforcement_learning/data/lookahead_v1_v014.npz
+
+Initial infection: node 4, v=0.28, behavior=v1
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+daily_ce: infected person-days=7.71, group payoff=65.67, follow rate=1.000
+lookahead_belief: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_mc: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_belief - daily_ce: -0.39 [-1.54, 0.47]
+lookahead_mc - daily_ce: -0.39 [-1.47, 0.47]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0.28, behavior=v1
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+daily_ce: infected person-days=7.03, group payoff=74.97, follow rate=1.000
+lookahead_belief: infected person-days=7.11, group payoff=74.34, follow rate=1.000
+lookahead_mc: infected person-days=7.08, group payoff=74.73, follow rate=1.000
+lookahead_belief - daily_ce: -0.63 [-1.73, 0.15]
+lookahead_mc - daily_ce: -0.25 [-0.79, 0.21]
+lookahead_mc - lookahead_belief: 0.39 [-0.13, 1.29]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v1_v028.csv and value tables to reinforcement_learning/data/lookahead_v1_v028.npz
+
+Initial infection: node 4, v=0, behavior=v2
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+daily_ce: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_mc: infected person-days=3.92, group payoff=-41.13, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0, behavior=v2
+lookahead_mc table differs from lookahead_belief in 0 of 154 cells
+daily_ce: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_mc: infected person-days=3.77, group payoff=-39.59, follow rate=1.000
+lookahead_belief - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - daily_ce: 0.00 [0.00, 0.00]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v2_v000.csv and value tables to reinforcement_learning/data/lookahead_v2_v000.npz
+
+Initial infection: node 4, v=0.14, behavior=v2
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+daily_ce: infected person-days=4.09, group payoff=11.06, follow rate=1.000
+lookahead_belief: infected person-days=4.19, group payoff=10.27, follow rate=1.000
+lookahead_mc: infected person-days=4.18, group payoff=10.41, follow rate=1.000
+lookahead_belief - daily_ce: -0.79 [-2.77, 1.13]
+lookahead_mc - daily_ce: -0.65 [-2.76, 1.22]
+lookahead_mc - lookahead_belief: 0.15 [-0.09, 0.54]
+
+Initial infection: node 0, v=0.14, behavior=v2
+lookahead_mc table differs from lookahead_belief in 1 of 154 cells
+daily_ce: infected person-days=3.79, group payoff=15.48, follow rate=1.000
+lookahead_belief: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_mc: infected person-days=3.81, group payoff=15.51, follow rate=1.000
+lookahead_belief - daily_ce: 0.02 [-0.26, 0.23]
+lookahead_mc - daily_ce: 0.03 [-0.24, 0.23]
+lookahead_mc - lookahead_belief: 0.00 [-0.01, 0.01]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v2_v014.csv and value tables to reinforcement_learning/data/lookahead_v2_v014.npz
+
+Initial infection: node 4, v=0.28, behavior=v2
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+daily_ce: infected person-days=7.71, group payoff=65.67, follow rate=1.000
+lookahead_belief: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_mc: infected person-days=7.78, group payoff=65.28, follow rate=1.000
+lookahead_belief - daily_ce: -0.39 [-1.54, 0.47]
+lookahead_mc - daily_ce: -0.39 [-1.47, 0.47]
+lookahead_mc - lookahead_belief: 0.00 [0.00, 0.00]
+
+Initial infection: node 0, v=0.28, behavior=v2
+lookahead_mc table differs from lookahead_belief in 2 of 154 cells
+daily_ce: infected person-days=7.03, group payoff=74.97, follow rate=1.000
+lookahead_belief: infected person-days=7.11, group payoff=74.34, follow rate=1.000
+lookahead_mc: infected person-days=7.08, group payoff=74.73, follow rate=1.000
+lookahead_belief - daily_ce: -0.63 [-1.73, 0.15]
+lookahead_mc - daily_ce: -0.25 [-0.79, 0.21]
+lookahead_mc - lookahead_belief: 0.39 [-0.13, 1.29]
+
+Saved 3000 rows to reinforcement_learning/data/lookahead_v2_v028.csv and value tables to reinforcement_learning/data/lookahead_v2_v028.npz

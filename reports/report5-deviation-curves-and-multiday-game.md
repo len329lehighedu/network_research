@@ -341,7 +341,7 @@ The binding obedience constraints are $-0.005x+0.01464y-0.01z=0$ for an outer pl
 The [full atlas CSV](../game/atlas_contact_value_4_6.csv) contains the network-level outcomes. This command joins them to graph features, prints the complete per-network feature data, and solves the bowtie LP.
 
 ```bash
-PYTHONPATH=.:game .venv/bin/python network_sis/reproduce_report3.py \
+PYTHONPATH=. .venv/bin/python game/reproduce_report5_network_features.py \
   --csv game/atlas_contact_value_4_6.csv
 ```
 

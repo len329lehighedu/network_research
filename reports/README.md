@@ -9,5 +9,6 @@ Reports follow the sequence of result emails in the communication log. Each file
 | [Report 3](report3-community-sis-and-small-games.md) | Community SIS and small contact games | Third results email, pp. 12–17 |
 | [Report 4](report4-contact-value-and-network-atlas.md) | Contact value, obedience, and the network atlas | Payoff discussion and fourth results email, pp. 18–24 |
 | [Report 5](report5-deviation-curves-and-multiday-game.md) | Deviation curves, network features, and the multiday benchmark | Follow-up requests, pp. 24–25. Prepared for the next reply. |
+| [Report 6](report6-compliance-and-rotation-beliefs.md) | Compliance behavior and rotation beliefs in the multiday benchmark | Follow-up to Report 5. Prepared for the next reply. |
 
 Run reproduction commands from the [repository root](../README.md#setup).

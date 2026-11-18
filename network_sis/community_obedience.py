@@ -1,5 +1,4 @@
 import numpy as np
-from game.contact_value_payoff import attendance_gain
 from network_sis.sis_experiment import attendance
 from network_sis.network_communities import build_community_world
 from game.contact_value_payoff import attendance_gain, extra_infection_cost

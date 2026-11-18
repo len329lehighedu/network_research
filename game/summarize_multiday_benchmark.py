@@ -26,7 +26,7 @@ SETTINGS = ("days", "root_seed", "beta", "gamma", "L_day", "c")
 
 
 def load_benchmark_groups(paths):
-    """Group outcomes by contact value and initial infection node."""
+    """Group outcomes by behavior, belief, contact value and initial infection node."""
     groups = {}
     expected_settings = None
     seen = set()
@@ -39,7 +39,13 @@ def load_benchmark_groups(paths):
                 if settings != expected_settings:
                     raise ValueError(f"{path}: benchmark settings differ beyond v.")
 
-                group = (float(row["v"]), int(row["initial_case"]))
+                # Old CSVs have no behavior columns, so they count as legacy/schedule.
+                group = (
+                    row.get("behavior", "legacy"),
+                    row.get("rotation_belief", "schedule"),
+                    float(row["v"]),
+                    int(row["initial_case"]),
+                )
                 replicate = int(row["replicate"])
                 policy = row["policy"]
                 key = (*group, replicate, policy)
@@ -48,11 +54,14 @@ def load_benchmark_groups(paths):
                 seen.add(key)
 
                 follow_rate = row["follow_rate"]
+                willingness = row.get("final_mean_willingness", "")
                 groups.setdefault(group, []).append({
                     "replicate": replicate,
                     "policy": policy,
                     **{metric: float(row[metric]) for metric in OUTCOMES},
                     "follow_rate": float(follow_rate) if follow_rate else None,
+                    # Empty means the policy has no willingness.
+                    "final_mean_willingness": float(willingness) if willingness else None,
                 })
 
     if not groups:
@@ -73,22 +82,28 @@ def print_benchmark_tables(groups, infection_cost, home_cost):
     breakdown_rows = []
     policy_pairs = tuple(combinations(POLICIES, 2))
 
-    for v, initial_case in sorted(groups, key=lambda group: (group[0], -group[1])):
-        rows = groups[v, initial_case]
+    for behavior, belief, v, initial_case in sorted(
+        groups, key=lambda group: (group[0], group[1], group[2], -group[3])
+    ):
+        rows = groups[behavior, belief, v, initial_case]
         summaries = summarize_policy_replicates(rows)
         if summaries.keys() != LABELS.keys():
-            raise ValueError(f"Expected all three policies for v={v:g}, node {initial_case}.")
-        label = (f"{v:.2f}", initial_case)
+            raise ValueError(
+                f"Expected all three policies for {behavior}/{belief}, v={v:g}, node {initial_case}."
+            )
+        label = (behavior, belief, f"{v:.2f}", initial_case)
 
         for policy in reversed(POLICIES):
             summary = summaries[policy]
             follow_rate = summary["follow_rate"]
+            willingness = summary["final_mean_willingness"]
             outcome_rows.append((
                 *label,
                 LABELS[policy],
                 summary["n_replicates"],
                 *(f"{summary[metric]:.2f}" for metric in OUTCOMES),
                 "N/A" if follow_rate is None else f"{follow_rate:.1%}",
+                "N/A" if willingness is None else f"{willingness:.3f}",
             ))
 
         # Match the bootstrap seed and contrast order used by the simulation CLI.
@@ -109,16 +124,18 @@ def print_benchmark_tables(groups, infection_cost, home_cost):
         contrast_rows.append((*label, *contrasts))
 
     print("### Mean outcomes per run\n")
-    print_table(("v", "Initial case", "Policy", "Runs", "Infected person-days",
-                 "Attendance person-days", "Active edge-days", "Group payoff", "Follow rate"), outcome_rows)
+    print_table(("Behavior", "Belief", "v", "Initial case", "Policy", "Runs", "Infected person-days",
+                 "Attendance person-days", "Active edge-days", "Group payoff", "Follow rate",
+                 "Final mean willingness"), outcome_rows)
 
     print("\n### Payoff differences with 95% paired bootstrap intervals\n")
-    print_table(("v", "Initial case", *(f"{LABELS[a]} − {LABELS[b]}" for a, b in policy_pairs)), contrast_rows)
+    print_table(("Behavior", "Belief", "v", "Initial case",
+                 *(f"{LABELS[a]} − {LABELS[b]}" for a, b in policy_pairs)), contrast_rows)
 
     print("\n### Breakdown of mean payoff differences\n")
     print("Each component is the contribution to the payoff of the first policy minus the second. "
           "Positive values favor the first policy. Totals use unrounded values.\n")
-    print_table(("v", "Initial case", "Comparison", "Contact benefit", "Infection cost savings",
+    print_table(("Behavior", "Belief", "v", "Initial case", "Comparison", "Contact benefit", "Infection cost savings",
                  "Home cost savings", "Group payoff difference"), breakdown_rows)
 
 

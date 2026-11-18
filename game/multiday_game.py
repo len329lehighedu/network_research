@@ -118,14 +118,20 @@ def choose_actual_action(recommendation, gain, willingness, rng):
     return "A" if recommendation == "H" else "H"
 
 def actions_from_fixed_recommendations(
-    graph, recommendations, willingness, pi, beta, L_day, gamma, c, v, rng
+    graph, recommendations, willingness, pi, beta, L_day, gamma, c, v, rng,
+    forecast_profile=None,
 ):
     """Choose actual actions given a publicly announced rotation schedule."""
+    # forecast_profile is the A/H profile people use to guess who will attend.
+    # None keeps the legacy behavior: everyone believes the announced schedule.
+    if forecast_profile is None:
+        forecast_profile = recommendations
+
     actual_actions = []
 
     for person, recommendation in enumerate(recommendations):
-        # Count neighbors scheduled to attend under the announced profile.
-        k = count_attending_neighbors(graph, recommendations, person)
+        # Count neighbors expected to attend under the FORECAST profile.
+        k = count_attending_neighbors(graph, forecast_profile, person)
 
         # Compute the expected gain from switching this person's action.
         gain = deviation_gain(recommendation, k, pi, beta, L_day, gamma, c, v)
@@ -139,13 +145,15 @@ def actions_from_fixed_recommendations(
 def run_fixed_rotation_day(
     graph, infected, recommendations, willingness, beta, gamma, L_day, c, v,
     decision_rng, sis_rng, *, infection_draws=None, recovery_draws=None,
+    forecast_profile=None,
 ):
     """Run one rotation day and return actual actions, next state, and payoffs."""
     # Use start-of-day prevalence to evaluate the recommendation.
     pi = float(infected.mean())
 
     # Convert the announced schedule into actual attendance choices.
-    actual_actions = actions_from_fixed_recommendations(graph, recommendations, willingness, pi, beta, L_day, gamma, c, v, decision_rng)
+    actual_actions = actions_from_fixed_recommendations(graph, recommendations, willingness, pi, beta, L_day, gamma, c, v, decision_rng,
+        forecast_profile=forecast_profile)
 
     # Use actual attendance for both infection updates and realized payoffs.
     next_infected, payoffs = run_one_day(graph, infected, actual_actions, beta, gamma, L_day, c, v, sis_rng, infection_draws=infection_draws,
@@ -156,6 +164,7 @@ def run_fixed_rotation_day(
 def run_fixed_rotation_trajectory(
     graph, initial_infected, daily_recommendations, willingness,
     beta, gamma, L_day, c, v, decision_rng, sis_rng, imitation_rng=None, *, infection_draws_by_day=None, recovery_draws_by_day=None,
+    belief="schedule",
 ):
     """Return infection, payoff, attendance, and willingness histories."""
     infected = initial_infected.copy()
@@ -167,7 +176,7 @@ def run_fixed_rotation_trajectory(
 
     for day, recommendations in enumerate(daily_recommendations):
         # Use today's willingness to choose today's actions.
-                # Select the SIS draws for this day.
+        # Select the SIS draws for this day.
         infection_draws = (
             None if infection_draws_by_day is None else infection_draws_by_day[day]
         )
@@ -175,8 +184,13 @@ def run_fixed_rotation_trajectory(
             None if recovery_draws_by_day is None else recovery_draws_by_day[day]
         )
         
+        # Build the profile people use to count attending neighbors today.
+        # action_history holds actual actions for days before `day` only.
+        forecast_profile = rotation_forecast_profile(daily_recommendations, action_history, day, belief)
+
         actual_actions, infected, payoffs = run_fixed_rotation_day(graph, infected, recommendations, willingness, beta, gamma, 
-        L_day, c, v, decision_rng, sis_rng, infection_draws=infection_draws, recovery_draws=recovery_draws)
+        L_day, c, v, decision_rng, sis_rng, infection_draws=infection_draws, recovery_draws=recovery_draws,
+        forecast_profile=forecast_profile)
 
         infection_history.append(infected.copy())
         payoff_history.append(payoffs)
@@ -194,6 +208,59 @@ def run_fixed_rotation_trajectory(
         action_history,
         np.stack(willingness_history),
     )
+
+def initial_willingness(n_people, behavior, rng):
+    """Return each person's starting willingness to follow a recommendation."""
+    # Willingness is the probability of following a recommendation
+    # when deviating would pay off. Values must lie in [0, 1].
+
+    # Legacy: spread evenly from 0 to 1 by person index, as in Report 5.
+    # It uses no randomness, so no RNG stream is consumed.
+    if behavior == "legacy":
+        return np.linspace(0, 1, n_people)
+
+    # Version 1: nobody is willing to follow against their own interest.
+    # Again no randomness is used.
+    if behavior == "v1":
+        return np.zeros(n_people)
+
+    # Version 2: each person draws willingness independently from Uniform[0, 1),
+    # using the per-replicate stream so other RNG streams stay untouched.
+    if behavior == "v2":
+        return rng.random(n_people)
+
+    # Any other value is a bug in the caller, so fail loudly.
+    raise ValueError(
+        f"Unknown behavior {behavior!r}; expected 'legacy', 'v1', or 'v2'."
+    )
+
+
+def rotation_forecast_profile(daily_recommendations, action_history, day, belief):
+    """Return the A/H profile a person uses to count attending neighbors today."""
+    # daily_recommendations[d] is the announced schedule for day d (a string of A/H).
+    # action_history[d] is the profile of ACTUAL actions on day d, and only days
+    # before `day` are filled in, so we never peek at today or the future.
+
+    # Schedule belief: everyone assumes the announced schedule will be followed.
+    if belief == "schedule":
+        return daily_recommendations[day]
+
+    # Last-same-phase belief: use what neighbors actually did the most recent
+    # time the schedule looked the same as today's.
+    if belief == "last_same_phase":
+        # Walk backward from yesterday to day 0 and stop at the first day d
+        # whose schedule equals today's schedule.
+        for d in range(day - 1, -1, -1):
+            if daily_recommendations[d] == daily_recommendations[day]:
+                return action_history[d]
+
+        # No earlier day had the same schedule, so fall back to the schedule itself.
+        return daily_recommendations[day]
+
+    raise ValueError(
+        f"Unknown belief {belief!r}; expected 'schedule' or 'last_same_phase'."
+    )
+
 
 def update_willingness(graph, willingness, payoffs, rng):
     """Return tomorrow's willingness after one round of peer imitation."""
@@ -410,7 +477,7 @@ def run_no_recommendation_trajectory(
 
     return np.stack(infection_history), np.stack(payoff_history), action_history
 
-def summarize_trajectory(graph, states, payoffs, actions, recommendations=None):
+def summarize_trajectory(graph, states, payoffs, actions, recommendations=None, willingness_history=None):
     """Summarize outcomes from one simulation run."""
     # Count infections at the end of each simulated day, excluding day zero.
     infected_person_days = states[1:].sum()
@@ -433,27 +500,42 @@ def summarize_trajectory(graph, states, payoffs, actions, recommendations=None):
         )
         follow_rate = matches / (len(actions) * graph.number_of_nodes())
 
+    # Average willingness on the last day; None when the policy has no willingness.
+    final_mean_willingness = None
+    if willingness_history is not None:
+        final_mean_willingness = float(willingness_history[-1].mean())
+
     return {
         "infected_person_days": int(infected_person_days),
         "attendance_person_days": attendance_person_days,
         "active_edge_days": active_edge_days,
         "group_payoff": float(payoffs.sum()),
         "follow_rate": follow_rate,
+        "final_mean_willingness": final_mean_willingness,
     }
     
     
 def compare_policies_once(
-    graph, groups, initial_infected, willingness, days, seed,
-    beta, gamma, L_day, c, v, *, update_prob=1.0
+    graph, groups, initial_infected, days, seed,
+    beta, gamma, L_day, c, v, *, update_prob=1.0,
+    behavior="legacy", rotation_belief="schedule",
 ):
     """Run all three attendance policies from the same initial conditions."""
     params = dict(beta=beta, gamma=gamma, L_day=L_day, c=c, v=v)
 
-    # Give disease, decisions, imitation, and recommendations separate RNG streams.
-    sis_seed, decision_seed, imitation_seed, recommendation_seed, revision_seed = (
-        np.random.SeedSequence(seed).spawn(5)
-    )
+    # Give disease, decisions, imitation, recommendations, revisions, and starting
+    # willingness separate RNG streams. spawn keys children by index, so the first
+    # five streams stay identical to the old spawn(5) and legacy results reproduce.
+    (sis_seed, decision_seed, imitation_seed, recommendation_seed, revision_seed,
+     willingness_seed) = np.random.SeedSequence(seed).spawn(6)
     rng = np.random.default_rng
+
+    # Build the starting willingness inside, so every replicate gets its own draw.
+    # Rotation and CE both start from this same array.
+    willingness = initial_willingness(graph.number_of_nodes(), behavior, rng(willingness_seed))
+
+    # Version 1 has no peer imitation; legacy and v2 do.
+    use_imitation = behavior != "v1"
     
     # Generate one infection draw and one recovery draw per day and person.
     sis_draw_rng = rng(sis_seed)
@@ -472,30 +554,35 @@ def compare_policies_once(
     results["no_recommendation"] = summarize_trajectory(graph, states, payoffs, actions)
 
     fixed_recommendations = fixed_rotation_actions(groups, days)
-    states, payoffs, actions, _ = run_fixed_rotation_trajectory(
+    states, payoffs, actions, willingness_history = run_fixed_rotation_trajectory(
         graph, initial_infected, fixed_recommendations, willingness, **params,
         decision_rng=rng(decision_seed), sis_rng=rng(sis_seed),
-        imitation_rng=rng(imitation_seed), **shared_draws
+        imitation_rng=rng(imitation_seed) if use_imitation else None,
+        belief=rotation_belief, **shared_draws
     )
-    results["fixed_rotation"] = summarize_trajectory(graph, states, payoffs, actions, fixed_recommendations)
+    results["fixed_rotation"] = summarize_trajectory(
+        graph, states, payoffs, actions, fixed_recommendations, willingness_history)
 
-    states, payoffs, ce_recommendations, actions, _ = run_ce_trajectory(
+    states, payoffs, ce_recommendations, actions, willingness_history = run_ce_trajectory(
         graph, initial_infected, days, willingness, **params,
         recommendation_rng=rng(recommendation_seed),
         decision_rng=rng(decision_seed), sis_rng=rng(sis_seed),
-        imitation_rng=rng(imitation_seed), **shared_draws
+        imitation_rng=rng(imitation_seed) if use_imitation else None, **shared_draws
     )
-    results["daily_ce"] = summarize_trajectory(graph, states, payoffs, actions, ce_recommendations)
+    results["daily_ce"] = summarize_trajectory(
+        graph, states, payoffs, actions, ce_recommendations, willingness_history)
 
     return results
 
 
 def run_policy_replicates(
-    graph, groups, initial_infected, willingness, days, n_replicates,
-    root_seed, beta, gamma, L_day, c, v, *, update_prob=1.0
+    graph, groups, initial_infected, days, n_replicates,
+    root_seed, beta, gamma, L_day, c, v, *, update_prob=1.0,
+    behavior="legacy", rotation_belief="schedule",
 ):
     """Return one result row per replicate and policy."""
-    params = dict(beta=beta, gamma=gamma, L_day=L_day, c=c, v=v, update_prob=update_prob)
+    params = dict(beta=beta, gamma=gamma, L_day=L_day, c=c, v=v, update_prob=update_prob,
+                  behavior=behavior, rotation_belief=rotation_belief)
     rows = []
 
     # Give each replicate a separate seed derived from the root seed.
@@ -505,7 +592,7 @@ def run_policy_replicates(
         seed = int(child_seed.generate_state(1, dtype=np.uint64)[0])
 
         # Run all three policies from the same initial conditions.
-        results = compare_policies_once(graph, groups, initial_infected, willingness, days, seed, **params)
+        results = compare_policies_once(graph, groups, initial_infected, days, seed, **params)
 
         for policy, summary in results.items():
             rows.append({
@@ -529,6 +616,7 @@ def summarize_policy_replicates(rows):
         "active_edge_days",
         "group_payoff",
         "follow_rate",
+        "final_mean_willingness",
     )
     summaries = {}
 

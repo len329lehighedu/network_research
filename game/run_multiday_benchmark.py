@@ -23,6 +23,8 @@ def main():
         "--update-prob", type=float, default=1.0,
         help="Daily probability of reconsidering attendance without recommendations.",
     )
+    parser.add_argument("--behavior", choices=("legacy", "v1", "v2"), default="legacy")
+    parser.add_argument("--rotation-belief", choices=("schedule", "last_same_phase"), default="schedule")
     args = parser.parse_args()
     if not 0.0 <= args.update_prob <= 1.0:
         parser.error("--update-prob must be between 0 and 1.")
@@ -31,8 +33,8 @@ def main():
 
     graph, groups = make_two_community_graph()
     n_people = graph.number_of_nodes()
-    willingness = np.linspace(0.0, 1.0, n_people)
-    params = dict(beta=0.04, gamma=0.2, L_day=10, c=0.05, v=args.v, update_prob=args.update_prob)
+    params = dict(beta=0.04, gamma=0.2, L_day=10, c=0.05, v=args.v, update_prob=args.update_prob,
+                  behavior=args.behavior, rotation_belief=args.rotation_belief)
     policies = ("daily_ce", "fixed_rotation", "no_recommendation")
     root_seed = 123
     all_rows = []
@@ -43,7 +45,7 @@ def main():
         print(f"\nInitial infection: node {initial_case}, v={args.v:g}", flush=True)
 
         rows = run_policy_replicates(
-            graph, groups, infected, willingness,
+            graph, groups, infected,
             days=args.days, n_replicates=args.runs, root_seed=root_seed,
             **params,
         )
@@ -54,7 +56,7 @@ def main():
                 "initial_case": initial_case,
                 "days": args.days,
                 "root_seed": root_seed,
-                **params,
+                **params,  # includes behavior and rotation_belief
                 **row,
             })
 

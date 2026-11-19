@@ -1,6 +1,6 @@
 # Report 6 — Compliance behavior and rotation beliefs in the multiday benchmark
 
-**Communication log:** Reply to the Report 5 results email (PDF pp. 25–30), next steps 1, 2 and 4 (step 3 deferred). This report is prepared for the next reply.
+**Communication log:** Reply to the Report 5 results email (PDF pp. 30–31), next steps 1, 2 and 4 (step 3 deferred). Results sent in the sixth results email, pp. 32–36.
 
 ## Inputs
 
@@ -175,9 +175,9 @@ Same settings with 2,000 runs per initial case. The first 500 replicates of each
 
 Brackets: 95% paired bootstrap intervals (2,000 draws, seed 456).
 
-<!-- TODO(LeMinh): add two sentences here.
-1. Why daily CE and no recommendation are identical in every scenario.
-2. Why, under V1 at v = 0 with initial case 4, fixed rotation matches daily CE in infected person-days in 500/500 replicates. -->
+Daily CE and no recommendation are identical in every scenario because neither depends on willingness or the rotation forecast. No recommendation uses neither. Every daily CE recommendation satisfies its obedience constraints, so following never loses, willingness is never consulted (follow rate 1.000 in every run), and the recommendation and SIS draws come from per-replicate streams that do not depend on the scenario.
+
+Under V1 at v = 0, fixed rotation matches daily CE in infected person-days in 500/500 replicates with initial case 4, because neither policy lets node 4 meet anyone while it is infected. At prevalence 0.1, daily CE sends exactly one person from each clique (nodes 1 and 7, no active contact). Under fixed rotation, node 4 stays home every day: on its attendance day it would meet four people (gain from staying home +0.67), and on its home day it would meet node 5 (gain from attending −0.13). Infected person-days are therefore node 4's illness length, which the shared recovery draws make equal. With initial case 0, the rotation sends node 0 in with nodes 1–3, and the two policies match in only 385/500 replicates.
 
 <details>
 <summary>Reproduce the tables</summary>

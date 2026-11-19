@@ -1,6 +1,6 @@
 # Report 5 — Deviation curves, network features, and the multiday benchmark
 
-**Communication log:** Follow-up requests, PDF pp. 24–25. This report is prepared for the next reply.
+**Communication log:** Follow-up requests, PDF pp. 24–25. Results sent in the fifth results email, pp. 25–30.
 
 - [Deviation shares](#deviations-from-zero-contact-value-to-welfare-break-even)
 - [Network features and bowtie](#network-features-and-recommendation-gains)
